@@ -10,8 +10,115 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+enum Color {
+  White
+  Blue
+  Black
+  Red
+  Green
+}
+
+model Format {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  name             String
+  legalCard        Card     @relation("legal_formats_fkeys", fields: [legalCardId], references: [id])
+  legalCardId      String
+  bannedCard       Card     @relation("banned_formats_fkeys", fields: [bannedCardId], references: [id])
+  bannedCardId     String
+  restricted       Card     @relation("restricted_formats_fkeys", fields: [restrictedCardId], references: [id])
+  restrictedCardId String
+}
+
+model Rarity {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  Card      Card?    @relation(fields: [cardId], references: [id])
+  cardId    String?
+}
+
+//TODO types SuperTypes
+
+model Card {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  name           String          @unique
+  hasFoilVersion Boolean
+  setId          Set[]
+  manaCost       String[]
+  cardVisual     CardVisual[]
+  color          Color[]
+  TypeId         CardType[]
+  superTypeId    CardSuperType[]
+  subTypeId      CardSubType[]
+  legal          Format[]        @relation("legal_formats_fkeys")
+  banned         Format[]        @relation("banned_formats_fkeys")
+  restricted     Format[]        @relation("restricted_formats_fkeys")
+  formatId       String
+  rarity         Rarity[]
+  FlavorText     FlavorText[]
+}
+
+model Set {
+  id         String       @id @default(cuid())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  cardId     Card[]
+  iconUrl    String?
+  FlavorText FlavorText[]
+}
+
+model CardVisual {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  artist    String
+  url       String
+  Card      Card?    @relation(fields: [cardId], references: [id])
+  cardId    String?
+}
+
+model FlavorText {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String?
+  card      Card     @relation(fields: [cardId], references: [id])
+  cardId    String
+  set       Set      @relation(fields: [setId], references: [id])
+  setId     String
+}
+
+model CardType {
+  id          String        @id @default(cuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String
+  card        Card?         @relation(fields: [cardId], references: [id])
+  cardId      String?
+  cardSubType CardSubType[]
+}
+
+model CardSuperType {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  Card      Card?    @relation(fields: [cardId], references: [id])
+  cardId    String?
+}
+
+model CardSubType {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  name       String
+  cardType   CardType @relation(fields: [cardTypeId], references: [id])
+  card       Card?    @relation(fields: [cardId], references: [id])
+  cardId     String?
+  cardTypeId String
 }
