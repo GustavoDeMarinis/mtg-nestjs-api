@@ -18,17 +18,24 @@ enum Color {
   Green
 }
 
+enum Legalities {
+  Banned
+  Restricted
+  Legal
+  NotLegal
+}
+
 model Format {
-  id               String   @id @default(cuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  name             String
-  legalCard        Card     @relation("legal_formats_fkeys", fields: [legalCardId], references: [id])
-  legalCardId      String
-  bannedCard       Card     @relation("banned_formats_fkeys", fields: [bannedCardId], references: [id])
-  bannedCardId     String
-  restricted       Card     @relation("restricted_formats_fkeys", fields: [restrictedCardId], references: [id])
-  restrictedCardId String
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  // legalCard        Card     @relation("legal_formats_fkeys", fields: [legalCardId], references: [id])
+  // legalCardId      String
+  // bannedCard       Card     @relation("banned_formats_fkeys", fields: [bannedCardId], references: [id])
+  // bannedCardId     String
+  // restricted       Card     @relation("restricted_formats_fkeys", fields: [restrictedCardId], references: [id])
+  // restrictedCardId String
 }
 
 model Rarity {
@@ -36,11 +43,9 @@ model Rarity {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  Card      Card?    @relation(fields: [cardId], references: [id])
+  card      Card?    @relation(fields: [cardId], references: [id])
   cardId    String?
 }
-
-//TODO types SuperTypes
 
 model Card {
   id             String          @id @default(cuid())
@@ -55,12 +60,13 @@ model Card {
   TypeId         CardType[]
   superTypeId    CardSuperType[]
   subTypeId      CardSubType[]
-  legal          Format[]        @relation("legal_formats_fkeys")
-  banned         Format[]        @relation("banned_formats_fkeys")
-  restricted     Format[]        @relation("restricted_formats_fkeys")
+  // legal          Format[]        @relation("legal_formats_fkeys")
+  // banned         Format[]        @relation("banned_formats_fkeys")
+  // restricted     Format[]        @relation("restricted_formats_fkeys")
   formatId       String
   rarity         Rarity[]
-  FlavorText     FlavorText[]
+  flavorText     FlavorText[]
+  cardLegality   CardLegality?
 }
 
 model Set {
@@ -78,7 +84,7 @@ model CardVisual {
   updatedAt DateTime @updatedAt
   artist    String
   url       String
-  Card      Card?    @relation(fields: [cardId], references: [id])
+  card      Card?    @relation(fields: [cardId], references: [id])
   cardId    String?
 }
 
@@ -108,7 +114,7 @@ model CardSuperType {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  Card      Card?    @relation(fields: [cardId], references: [id])
+  card      Card?    @relation(fields: [cardId], references: [id])
   cardId    String?
 }
 
@@ -118,7 +124,36 @@ model CardSubType {
   updatedAt  DateTime @updatedAt
   name       String
   cardType   CardType @relation(fields: [cardTypeId], references: [id])
+  cardTypeId String
   card       Card?    @relation(fields: [cardId], references: [id])
   cardId     String?
-  cardTypeId String
+}
+
+model CardLegality {
+  id              String     @id @default(cuid())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  card            Card       @relation(fields: [cardId], references: [id])
+  cardId          String     @unique
+  standard        Legalities @default(NotLegal)
+  future          Legalities @default(NotLegal)
+  historic        Legalities @default(NotLegal)
+  gladiator       Legalities @default(NotLegal)
+  pioneer         Legalities @default(NotLegal)
+  explorer        Legalities @default(NotLegal)
+  modern          Legalities @default(NotLegal)
+  legacy          Legalities @default(NotLegal)
+  pauper          Legalities @default(NotLegal)
+  vintage         Legalities @default(NotLegal)
+  penny           Legalities @default(NotLegal)
+  commander       Legalities @default(NotLegal)
+  oathbreaker     Legalities @default(NotLegal)
+  brawl           Legalities @default(NotLegal)
+  historicBrawl   Legalities @default(NotLegal)
+  alchemy         Legalities @default(NotLegal)
+  pauperCommander Legalities @default(NotLegal)
+  duel            Legalities @default(NotLegal)
+  oldschool       Legalities @default(NotLegal)
+  premodern       Legalities @default(NotLegal)
+  preedh          Legalities @default(NotLegal)
 }
