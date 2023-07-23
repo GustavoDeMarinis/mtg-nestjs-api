@@ -38,6 +38,14 @@ model Format {
   // restrictedCardId String
 }
 
+model ManaCost {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  label     String
+  symbol    String
+}
+
 model Rarity {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -56,17 +64,16 @@ model Card {
   setId          Set[]
   manaCost       String[]
   cardVisual     CardVisual[]
-  color          Color[]
+  colorIdentity  Color[]
   TypeId         CardType[]
   superTypeId    CardSuperType[]
   subTypeId      CardSubType[]
-  // legal          Format[]        @relation("legal_formats_fkeys")
-  // banned         Format[]        @relation("banned_formats_fkeys")
-  // restricted     Format[]        @relation("restricted_formats_fkeys")
-  formatId       String
   rarity         Rarity[]
   flavorText     FlavorText[]
   cardLegality   CardLegality?
+  // legal          Format[]        @relation("legal_formats_fkeys")
+  // banned         Format[]        @relation("banned_formats_fkeys")
+  // restricted     Format[]        @relation("restricted_formats_fkeys")
 }
 
 model Set {
