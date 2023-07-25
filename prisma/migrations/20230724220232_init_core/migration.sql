@@ -1,25 +1,31 @@
 -- CreateEnum
 CREATE TYPE "Color" AS ENUM ('White', 'Blue', 'Black', 'Red', 'Green');
 
+-- CreateEnum
+CREATE TYPE "Legalities" AS ENUM ('Banned', 'Restricted', 'NotLegal', 'Legal');
+
+-- CreateEnum
+CREATE TYPE "Rarity" AS ENUM ('Basic', 'Common', 'Uncommon', 'Rare', 'Mythic');
+
 -- CreateTable
-CREATE TABLE "Format" (
+CREATE TABLE "SetType" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
 
-    CONSTRAINT "Format_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SetType_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Rarity" (
+CREATE TABLE "ManaCost" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "name" TEXT NOT NULL,
-    "cardId" TEXT,
+    "label" TEXT NOT NULL,
+    "symbol" TEXT NOT NULL,
 
-    CONSTRAINT "Rarity_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ManaCost_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -28,10 +34,36 @@ CREATE TABLE "Card" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
-    "hasFoilVersion" BOOLEAN NOT NULL,
+    "isFoil" BOOLEAN NOT NULL,
     "manaCost" TEXT[],
-    "color" "Color"[],
-    "formatId" TEXT NOT NULL,
+    "cardImageUrl" TEXT NOT NULL,
+    "colorIdentity" "Color"[],
+    "flavorText" TEXT,
+    "power" TEXT,
+    "toughness" TEXT,
+    "rarity" "Rarity" NOT NULL,
+    "setId" TEXT NOT NULL,
+    "standardLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "futureLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "historicLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "gladiatorLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "pioneerLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "explorerLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "modernLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "legacyLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "pauperLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "vintageLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "pennyLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "commanderLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "oathbreakerLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "brawlLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "historicBrawlLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "alchemyLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "pauperCommanderLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "duelLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "oldschoolLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "premodernLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "preedhLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
 
     CONSTRAINT "Card_pkey" PRIMARY KEY ("id")
 );
@@ -42,32 +74,11 @@ CREATE TABLE "Set" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "iconUrl" TEXT,
+    "name" TEXT NOT NULL,
+    "releaseDate" TIMESTAMP(3) NOT NULL,
+    "setTypeId" TEXT NOT NULL,
 
     CONSTRAINT "Set_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "CardVisual" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "artist" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "cardId" TEXT,
-
-    CONSTRAINT "CardVisual_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "FlavorText" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "text" TEXT,
-    "cardId" TEXT NOT NULL,
-    "setId" TEXT NOT NULL,
-
-    CONSTRAINT "FlavorText_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -104,32 +115,14 @@ CREATE TABLE "CardSubType" (
     CONSTRAINT "CardSubType_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "_CardToSet" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Card_name_key" ON "Card"("name");
 
--- CreateIndex
-CREATE UNIQUE INDEX "_CardToSet_AB_unique" ON "_CardToSet"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_CardToSet_B_index" ON "_CardToSet"("B");
+-- AddForeignKey
+ALTER TABLE "Card" ADD CONSTRAINT "Card_setId_fkey" FOREIGN KEY ("setId") REFERENCES "Set"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Rarity" ADD CONSTRAINT "Rarity_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CardVisual" ADD CONSTRAINT "CardVisual_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FlavorText" ADD CONSTRAINT "FlavorText_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FlavorText" ADD CONSTRAINT "FlavorText_setId_fkey" FOREIGN KEY ("setId") REFERENCES "Set"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Set" ADD CONSTRAINT "Set_setTypeId_fkey" FOREIGN KEY ("setTypeId") REFERENCES "SetType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CardType" ADD CONSTRAINT "CardType_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -142,9 +135,3 @@ ALTER TABLE "CardSubType" ADD CONSTRAINT "CardSubType_cardTypeId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "CardSubType" ADD CONSTRAINT "CardSubType_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_CardToSet" ADD CONSTRAINT "_CardToSet_A_fkey" FOREIGN KEY ("A") REFERENCES "Card"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_CardToSet" ADD CONSTRAINT "_CardToSet_B_fkey" FOREIGN KEY ("B") REFERENCES "Set"("id") ON DELETE CASCADE ON UPDATE CASCADE;
