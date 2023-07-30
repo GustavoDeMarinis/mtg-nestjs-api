@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { cardTypeIds } from './resource-ids';
+import prisma from '../../../src/integrations/prisma-client';
 
 const buildCardTypes = (): Prisma.CardTypeCreateManyInput[] => {
   const cardTypes: Prisma.CardTypeCreateManyInput[] = [
