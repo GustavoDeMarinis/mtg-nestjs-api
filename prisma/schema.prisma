@@ -50,10 +50,10 @@ enum Rarity {
 }
 
 model Card {
-  id                      String          @id @default(cuid())
-  createdAt               DateTime        @default(now())
-  updatedAt               DateTime        @updatedAt
-  name                    String          @unique
+  id                      String         @id @default(cuid())
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  name                    String         @unique
   isFoil                  Boolean
   manaCost                String[]
   cardImageUrl            String
@@ -61,33 +61,39 @@ model Card {
   flavorText              String?
   power                   String?
   toughness               String?
-  TypeId                  CardType[]
-  superTypeId             CardSuperType[]
-  subTypeId               CardSubType[]
+  // TypeId                  CardType[]
+  // superTypeId             CardSuperType[]
+  // subTypeId               CardSubType[]
   rarity                  Rarity
-  set                     Set             @relation(fields: [setId], references: [id])
+  set                     Set            @relation(fields: [setId], references: [id])
   setId                   String
-  standardLegality        Legalities      @default(NotLegal)
-  futureLegality          Legalities      @default(NotLegal)
-  historicLegality        Legalities      @default(NotLegal)
-  gladiatorLegality       Legalities      @default(NotLegal)
-  pioneerLegality         Legalities      @default(NotLegal)
-  explorerLegality        Legalities      @default(NotLegal)
-  modernLegality          Legalities      @default(NotLegal)
-  legacyLegality          Legalities      @default(NotLegal)
-  pauperLegality          Legalities      @default(NotLegal)
-  vintageLegality         Legalities      @default(NotLegal)
-  pennyLegality           Legalities      @default(NotLegal)
-  commanderLegality       Legalities      @default(NotLegal)
-  oathbreakerLegality     Legalities      @default(NotLegal)
-  brawlLegality           Legalities      @default(NotLegal)
-  historicBrawlLegality   Legalities      @default(NotLegal)
-  alchemyLegality         Legalities      @default(NotLegal)
-  pauperCommanderLegality Legalities      @default(NotLegal)
-  duelLegality            Legalities      @default(NotLegal)
-  oldschoolLegality       Legalities      @default(NotLegal)
-  premodernLegality       Legalities      @default(NotLegal)
-  preedhLegality          Legalities      @default(NotLegal)
+  standardLegality        Legalities     @default(NotLegal)
+  futureLegality          Legalities     @default(NotLegal)
+  historicLegality        Legalities     @default(NotLegal)
+  gladiatorLegality       Legalities     @default(NotLegal)
+  pioneerLegality         Legalities     @default(NotLegal)
+  explorerLegality        Legalities     @default(NotLegal)
+  modernLegality          Legalities     @default(NotLegal)
+  legacyLegality          Legalities     @default(NotLegal)
+  pauperLegality          Legalities     @default(NotLegal)
+  vintageLegality         Legalities     @default(NotLegal)
+  pennyLegality           Legalities     @default(NotLegal)
+  commanderLegality       Legalities     @default(NotLegal)
+  oathbreakerLegality     Legalities     @default(NotLegal)
+  brawlLegality           Legalities     @default(NotLegal)
+  historicBrawlLegality   Legalities     @default(NotLegal)
+  alchemyLegality         Legalities     @default(NotLegal)
+  pauperCommanderLegality Legalities     @default(NotLegal)
+  duelLegality            Legalities     @default(NotLegal)
+  oldschoolLegality       Legalities     @default(NotLegal)
+  premodernLegality       Legalities     @default(NotLegal)
+  preedhLegality          Legalities     @default(NotLegal)
+  cardType                CardType?      @relation(fields: [cardTypeId], references: [id])
+  cardTypeId              String?
+  cardSuperType           CardSuperType? @relation(fields: [cardSuperTypeId], references: [id])
+  cardSuperTypeId         String?
+  cardSubType             CardSubType?   @relation(fields: [cardSubTypeId], references: [id])
+  cardSubTypeId           String?
 }
 
 model Set {
@@ -107,8 +113,7 @@ model CardType {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   name        String
-  card        Card?         @relation(fields: [cardId], references: [id])
-  cardId      String?
+  card        Card[]
   cardSubType CardSubType[]
 }
 
@@ -117,8 +122,7 @@ model CardSuperType {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  card      Card?    @relation(fields: [cardId], references: [id])
-  cardId    String?
+  card      Card[]
 }
 
 model CardSubType {
@@ -128,6 +132,5 @@ model CardSubType {
   name       String
   cardType   CardType @relation(fields: [cardTypeId], references: [id])
   cardTypeId String
-  card       Card?    @relation(fields: [cardId], references: [id])
-  cardId     String?
+  card       Card[]
 }

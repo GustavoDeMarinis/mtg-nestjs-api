@@ -1,3 +1,4 @@
+import { seedCardTypes } from './seed-card-types';
 import { seedLocalCards } from './seed-cards';
 import { seedManaCost } from './seed-mana-cost';
 import { seedSetTypes } from './seed-set-types';
@@ -7,5 +8,6 @@ export const seedLocal = async () => {
   await seedManaCost();
   await seedSetTypes();
   await seedSets();
+  await seedCardTypes();
   await seedLocalCards();
 };

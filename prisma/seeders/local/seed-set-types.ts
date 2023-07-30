@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import prisma from '../../../src/integrations/prisma-client';
 import { setTypeIds } from './resource-ids';
 
 const buildSetTypes = (): Prisma.SetTypeCreateManyInput[] => {
@@ -34,7 +35,7 @@ export const seedSetTypes = async (): Promise<{
   setTypes: Prisma.SetTypeCreateManyInput[];
 }> => {
   const setTypes = buildSetTypes();
-  prisma.setType.createMany({
+  await prisma.setType.createMany({
     data: setTypes,
   });
   return { setTypes };

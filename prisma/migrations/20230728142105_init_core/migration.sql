@@ -64,6 +64,9 @@ CREATE TABLE "Card" (
     "oldschoolLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
     "premodernLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
     "preedhLegality" "Legalities" NOT NULL DEFAULT 'NotLegal',
+    "cardTypeId" TEXT,
+    "cardSuperTypeId" TEXT,
+    "cardSubTypeId" TEXT,
 
     CONSTRAINT "Card_pkey" PRIMARY KEY ("id")
 );
@@ -87,7 +90,6 @@ CREATE TABLE "CardType" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
-    "cardId" TEXT,
 
     CONSTRAINT "CardType_pkey" PRIMARY KEY ("id")
 );
@@ -98,7 +100,6 @@ CREATE TABLE "CardSuperType" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
-    "cardId" TEXT,
 
     CONSTRAINT "CardSuperType_pkey" PRIMARY KEY ("id")
 );
@@ -110,7 +111,6 @@ CREATE TABLE "CardSubType" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "cardTypeId" TEXT NOT NULL,
-    "cardId" TEXT,
 
     CONSTRAINT "CardSubType_pkey" PRIMARY KEY ("id")
 );
@@ -122,16 +122,16 @@ CREATE UNIQUE INDEX "Card_name_key" ON "Card"("name");
 ALTER TABLE "Card" ADD CONSTRAINT "Card_setId_fkey" FOREIGN KEY ("setId") REFERENCES "Set"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Card" ADD CONSTRAINT "Card_cardTypeId_fkey" FOREIGN KEY ("cardTypeId") REFERENCES "CardType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Card" ADD CONSTRAINT "Card_cardSuperTypeId_fkey" FOREIGN KEY ("cardSuperTypeId") REFERENCES "CardSuperType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Card" ADD CONSTRAINT "Card_cardSubTypeId_fkey" FOREIGN KEY ("cardSubTypeId") REFERENCES "CardSubType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Set" ADD CONSTRAINT "Set_setTypeId_fkey" FOREIGN KEY ("setTypeId") REFERENCES "SetType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CardType" ADD CONSTRAINT "CardType_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CardSuperType" ADD CONSTRAINT "CardSuperType_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "CardSubType" ADD CONSTRAINT "CardSubType_cardTypeId_fkey" FOREIGN KEY ("cardTypeId") REFERENCES "CardType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CardSubType" ADD CONSTRAINT "CardSubType_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE SET NULL ON UPDATE CASCADE;
