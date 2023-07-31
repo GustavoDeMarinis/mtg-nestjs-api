@@ -1,6 +1,6 @@
 import { Color, Prisma, Rarity } from '@prisma/client';
 import prisma from '../../../src/integrations/prisma-client';
-import { manaSymbols, setIds } from './resource-ids';
+import { cardTypeIds, manaSymbols, setIds } from './resource-ids';
 
 const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
   const cards: Prisma.CardUncheckedCreateInput[] = [
@@ -12,6 +12,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Time Walk',
@@ -21,6 +24,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.sorcery }],
+      },
     },
     {
       name: 'Timetwister',
@@ -30,6 +36,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.sorcery }],
+      },
     },
     {
       name: 'Ancestral Recall',
@@ -39,6 +48,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.instant }],
+      },
     },
     {
       name: 'Mox Emerald',
@@ -48,6 +60,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Mox Jet',
@@ -57,6 +72,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Mox Pearl',
@@ -66,6 +84,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Mox Ruby',
@@ -75,6 +96,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Mox Sapphire',
@@ -84,6 +108,9 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.artifact }],
+      },
     },
     {
       name: 'Tiny Bones',
@@ -93,17 +120,23 @@ const buildLocalCards = (): Prisma.CardUncheckedCreateInput[] => {
       cardImageUrl: '',
       rarity: Rarity.Rare,
       setId: setIds.alpha,
+      cardType: {
+        connect: [{ id: cardTypeIds.creature }],
+      },
     },
   ];
   return cards;
 };
 
 export const seedLocalCards = async (): Promise<{
-  cards: Prisma.CardCreateManyInput[];
+  cards: Prisma.CardUncheckedCreateInput[];
 }> => {
   const cards = buildLocalCards();
-  await prisma.card.createMany({
-    data: cards,
+
+  cards.map(async (card) => {
+    return await prisma.card.create({
+      data: card,
+    });
   });
   return { cards };
 };
